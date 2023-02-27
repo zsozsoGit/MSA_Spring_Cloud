@@ -29,6 +29,7 @@ Funkcionális és nem funkcionális követelmények különválasztása
 Hogyan képzelem el az alkalmazást?
 Egy "Hello World" alkalmazásnál nincsen értelme még microservice-eket alkalmazni. Egy bonyolult alkalmazás kell ehhez a demozáshoz.  
 Skills, szerepkör, tanfolyam: entitások... -> Logikai adatmodell, UML: osztálydiagram (statikus nézet), UseCases, ezekből Epics, Stories (UML Distilled book, easy)
+Eventstorming -> BDD tesztek -> Aggregate routes -> API -> Implementálás
 
 ## Use Case Diagram
 
@@ -41,7 +42,7 @@ Lényeg: az ügyfél is megértse az ábrát :)
    - Kurzus (indítás, kiválasztás, jelentkezés, jóváhagyás, teljesítés)
    - Kiléptetés (alkalmazott)
 
-## Event Storming
+## Event Storming (ha nagyon nem látom át, mi az üzleti folyamat, mik az igények)
 
 - Developed by Alberto Brandolini
 - Workshop
@@ -50,7 +51,45 @@ Lényeg: az ügyfél is megértse az ábrát :)
 
 ## DDD (Domain Driven Design)
 
-1. Strategic design: 
+1. Strategic design
    1. Problem Space (Domains) <-> Solution Space
       1. Sub-Domains: Core (amihez a cég a legjobban ért, a bevételi forrás), Supporting (ezzekkel a Core miatt kötelezően kell foglalkozni), Generic (erre vannak kész megoldások -> 3rd party megoldások)
-      2. Bounded Contexts in Solution Space (e.g. HR, kurzus, alkalmazott) és ezek között mapping létrehozása szükséges! Ilyen stratégia van 8 db.
+      2. Bounded Contexts in Solution Space (e.g. HR, kurzus, alkalmazott) és ezek között mapping létrehozása szükséges!
+         1. Egy ilyen BC-ből lehet egy microservice.
+         2. Egy microservice-t egy ember meg tud érteni teljesen
+         3. Egy csapat dolgozhat csak egy microservice-en...
+         4. Package-be lehet szintén egy moduláris alkalmazást szétszedni.
+      3. Bounded Contexts Mapping Strategies:
+         1. Partnership (Egybe)
+         2. Shared Kernel (Pl. megosztott JAR a régi világban - közös lónak túrós a háta)
+         3. Customer - Supplier (meg kell feleni a másiknak, kicsit homályos a szerepfelosztás nekem)
+         4. Conformist 
+         5. Anti Corruption Layer (lehet külön MS is) az én domain-emre alakítja át. (Pl. protokoll transzformáció)
+         6. Open Host Service (Supplier ad egy klienst, pl. a git library)
+         7. Published Language (van egy API leíró...)
+         8. Separate ways (nem megvalósítható)
+      4. Event Storming lépései
+         1. üzleti események (Big Picture)
+         2. események kiváltói? (Process Modelling)
+         3. aggregates? (Business Modelling)
+2. Towards Implementation: *Tactical Design Tools* (ezeket az ügyfél határozza meg valójában)
+   1. Entity: van azonosítója, egy adatbázis rekord pl., változtatható (mutable) Sprint Bootban JPA entitásnak felel meg. És ebben vannak állapot módosító metódusok, és itt van az üzleti logika is.
+      1. _Bad Pattern_ -> Transactional script: entitásnak van getter-setter, és a service állítgatja ezt. Ez nem objektumorientált, ez a megoldás procedurális. (Anemic model)
+      ![Transactional Script](tr_script.png)
+   2. Value Object: immutable, auto-validation, nincsen ID, equals működik, Thread Safe. (pl. primitive burkolóosztály, idő, dátum, `record` típus)
+      1. Lehetőleg használjunk ilyen Value Object-eket, tanácsolja a DDD.
+      2. JPA `@Embeddable` érdemes `Lazy` módon nem fogja betölteni. Vagy "projection query" a megoldás.
+   3. Aggregate-ek között csak ID alapon lehet kommunikálni. Egy aggregate, ami egyetlen tranzakcióban módosul. Van Aggregate root.
+   ![Use IDs](ID.png) Több Aggregate egy Bounded Contextben, de itt is csak ID alapon kommunikálunk belül is. Ilyenkor mindent betöltünk, mert tipikusan minden részéhez hozzányúlunk...
+   Itt a függvény nevek legyenek azonosok a UseCase-ben definiált nevekkel. Pl. felhasználó címváltozás: `move()` (költözik), `correct()` (elgépelték)
+   ![Egy BC](BC.png)
+
+---
+---
+# Random Notes out of Context
+
+- Egy microservice-ben 5-8 tábla lehet max.
+- Annotation JPA "`fetchtype eager`"
+- UL: Ubiquitous Language, mindenki az üzlet és az informatikus is megérti.  
+Fogalomszótár kellene. Fájdalmas, de behozza az árát. Magyarországon magyarul fejlesztünk. Ha az üzlet nyelve angol, akkor mehet az angol. Persze lehet, hogy a szoftvert eladjuk más országba is, akkor nagyon kell a fogalomszótár.
+- 
