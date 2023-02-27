@@ -1,1 +1,8 @@
-# MSA_Spring_Cloud
+# Bevezető
+
+GitHub repo a forrásokkal és slide-okkal:
+https://github.com/Training360/ ??
+
+## Tematika megjegyzések
+
+REST már nem túl szeretett.
