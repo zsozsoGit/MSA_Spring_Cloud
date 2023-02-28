@@ -84,6 +84,28 @@ Lényeg: az ügyfél is megértse az ábrát :)
    Itt a függvény nevek legyenek azonosok a UseCase-ben definiált nevekkel. Pl. felhasználó címváltozás: `move()` (költözik), `correct()` (elgépelték)
    ![Egy BC](BC.png)
 
+## C4 Diagrams 
+
+Először lényeges, hogy legyen jelmagyarázat.
+
+1. Szint az a rendszer határai, kontext
+2. Konténerek
+3. Komponensek
+4. Osztályok, kód szint. Nem ad nekünk plusz információt, nem kell erőltetni.
+
+Példák: [https://www.jtechlog.hu/2022/12/19/spring-modulith.html]
+
+# Kódolás
+
+Fontos dolgok:
+- Portokat érdemes előre az ábrába beírni, hogy ne legyen összeakadás
+- baeldung: java-performance-mapping-frameworks
+- Továbbra is érdemes sok (~10000) stringnél StringBuildert készíteni 
+- `@SneakyThrows` - kezelendő exceptions-t már nem használunk ma: JPA-ban pl. nincsen már, mert úgyis "feltör". .NET-ben nincsen "checked exception"
+- Swagger UI: `<dependency>   <groupId>org.springdoc</groupId>   <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>   <version>2.0.2</version></dependency>` pom-ba!
+- Idempotencia: több minden jöhet, ami hasonló, leellenőrzöm, hogy benne van-e.
+- API Composition: Mapper segítségével.
+- API Gateway: plusz egy lehet még a belső szolgáltatásokra is...
 ---
 ---
 # Random Notes out of Context
