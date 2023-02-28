@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8"/>
+    <title>Employees</title>
+</head>
+<body>
+
+<h1>Employees</h1>
+
+<p th:replace="~{fragments/menu.html :: p}"></p>
+
+<table>
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Links</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="employee : ${employees}">
+            <td th:text="${employee.id}">10</td>
+            <td th:text="${employee.name}">John Doe</td>
+            <td th:text="${employee.role.name}">Senior Java Developer</td>
+    </tr>
+    </tbody>
+</table>
+
+<a href="/create-employee">Create employee</a>
+
+</body>
+</html>
