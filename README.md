@@ -4,6 +4,7 @@ GitHub repo a forrásokkal és slide-okkal:
 https://github.com/Training360/ ??
 
 ## Tematika megjegyzések
+Minden tool itt ingyenes ezen a tanfolyamon
 
 ### Deprecation Stories
 
@@ -106,6 +107,19 @@ Fontos dolgok:
 - Idempotencia: több minden jöhet, ami hasonló, leellenőrzöm, hogy benne van-e.
 - API Composition: Mapper segítségével.
 - API Gateway: plusz egy lehet még a belső szolgáltatásokra is...
+- A Backend for Frontend fejlesztője inkább a frontend fejlesztő legyen, ő tudja, mit kell a megjelenítéshez rendesen lekérdezni...
+- The Clean Architecture Picture
+- Spring Cloud Dependency management: nem kell a pom-ba verziószámot megadni, mert "központilag" van kezelve.
+## Kafka
+
+- Message-oriented Middleware
+  - Mi újabbat adott a Kafka? Hogy skálázható és klaszterezhető legyen.
+    - Üzenet adatbázis, mindent letárol
+  - Correlation ID (mint a REST API) lehet visszajelezni
+  - Minden MS rendelkezzen 3 Kafka topic-kal
+    - Request
+    - Event: ha valami történik a MS-szel, fel lehet rá iratkozni
+    - Response
 ---
 ---
 # Random Notes out of Context
@@ -114,4 +128,17 @@ Fontos dolgok:
 - Annotation JPA "`fetchtype eager`"
 - UL: Ubiquitous Language, mindenki az üzlet és az informatikus is megérti.  
 Fogalomszótár kellene. Fájdalmas, de behozza az árát. Magyarországon magyarul fejlesztünk. Ha az üzlet nyelve angol, akkor mehet az angol. Persze lehet, hogy a szoftvert eladjuk más országba is, akkor nagyon kell a fogalomszótár.
+- JaSypt Java Simplified Encription
+- Saga Microservice-en átnyúló üzleti folyamat, elosztott tranzakciókezelés: lehet, hogy monolit kell? Igen...
+  - Event sourcing... Tranzakciók ellenőrzése, Snapshot: pl. banki napi zárás Megoldás: AxonIQ
+  - Ezeknek két típusa van:
+    - Coreography: mindenki tudja, ki a következő szereplő, lánc
+    Rollback? Kompenzáló tranzakció: minden műveletnek megírom az ellentétét, `cancel-`
+    - Orchestration: pl. a Spring State Machine, itt van egy főnök. :) Egy állapotátmenet diagramot lehet ezzel leprogramozni
+- Netty: aszinkron, reaktív szerver
+- Cache eviction: nem változó rendszer változik, cache? Inkább ne cache-elni :)
+- Intelligens default értékek Spring nagyon jó tulajdonsága
+- Saga csak egy helyütt lehet
+  - Camunda Workflow motor... ha túl bonyolult lenne már a Saga. 
+  https://www.jtechlog.hu/2014/07/25/pehelysulyu-workflow-activitivel.html
 - 
