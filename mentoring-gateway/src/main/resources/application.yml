@@ -1,0 +1,32 @@
+server:
+  port: 8085
+spring:
+  cloud:
+    gateway:
+      filter:
+        local-response-cache:
+          enabled: true
+      routes:
+        - id: roles
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/api/roles/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: rolesCircuitBreaker
+                fallbackUri: forward:/dummy/api/roles
+        - id: employees
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/api/employees/**
+          filters:
+#            - LocalResponseCache=30m,500MB
+            - name: CircuitBreaker
+              args:
+                name: employeesCircuitBreaker
+                fallbackUri: forward:/dummy/api/employees
+        - id: courses
+          uri: http://localhost:8083/
+          predicates:
+            - Path=/api/courses/**

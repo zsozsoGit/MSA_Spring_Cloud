@@ -1,0 +1,19 @@
+### GraphQL
+POST http://localhost:8088/graphql
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+query {
+    courses {
+        id
+        name
+      	courseDetails {
+          description
+          syllabus
+          enrolledEmployees {
+          	id
+            name
+          }
+        }
+    }
+}
