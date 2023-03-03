@@ -1,56 +1,158 @@
-# Bevezető
+# Spring Cloud tanfolyam
 
-GitHub repo a forrásokkal és slide-okkal:
-https://github.com/Training360/ ??
+## Felhasznált irodalom
 
-## Tematika megjegyzések
+Chris Richardson: Microservices Patterns, https://microservices.io/patterns/microservices.html
+Vaughn Vernon: Domain-Driven Design Distilled
 
-### Deprecation Stories
+## Ajánlott irodalom
 
-A legmodernebb eszközökkel kezdjük el.
-REST már nem túl szeretett.
-Sok minden, mint pl. az Open Feign már "deprecated".
-Általánosságban nagyon gyorsan elhasználódik a dolgok nagy része...
-Domain-Driven Desing kék könyv nem annyira jó ellenben van egy másik könyv a -Distilled postfixű jobb.  
-Microservices with Spring Boot and Spring Cloud ISBN 1801072973
+Microservices with Spring Boot and Spring Cloud: Build resilient and scalable microservices using Spring Cloud, Istio, and Kubernetes, 2nd Edition 2nd ed. Edition
+Building Microservices - Designing Fine-Grained Systems 2nd Edition
+Cloud Native Spring in Action
 
-### Bemutatkozások
+## Klónozás
 
-Kolléga:
-Moduláris monolit: modulit, lehet, hogy nem is jó rögtön microservice-eket csinálni.
-SOA-ból lettek microservice-ek.   
-Mondjuk el az előítéleteinket!
+```shell
+git clone https://github.com/Training360/spr-cl-trainin-2023-02-28
+```
 
-# Üzleti tervezés
+## Saját projekt létrehozása
 
-Agilis fejlesztés -> monitoring -> DevOps (IaC)  
-Funkcionális és nem funkcionális követelmények különválasztása
+* `mentoring-app` könyvtár létrehozása
+* A klónozott repo-ból az `employee-service` könyvtár átmásolása
 
-Hogyan képzelem el az alkalmazást?
-Egy "Hello World" alkalmazásnál nincsen értelme még microservice-eket alkalmazni. Egy bonyolult alkalmazás kell ehhez a demozáshoz.  
-Skills, szerepkör, tanfolyam: entitások... -> Logikai adatmodell, UML: osztálydiagram (statikus nézet), UseCases, ezekből Epics, Stories (UML Distilled book, easy)
+## employee-service elindítása
 
-## Use Case Diagram
+* Docker Desktop indítása
+* `docker ps` parancs kiadása
 
-Lényeg: az ügyfél is megértse az ábrát :)
+```shell
+docker run -d -e POSTGRES_DB=employees -e POSTGRES_USER=employees -e POSTGRES_PASSWORD=employees -p 5432:5432  --name employees-postgres postgres
+```
 
-- A rendszer határai
-    - Actors (alkalmazott, főnök, HRManager), other systems
-- UseCases
-   - Beléptetés (alkalmazott)
-   - Kurzus (indítás, kiválasztás, jelentkezés, jóváhagyás, teljesítés)
-   - Kiléptetés (alkalmazott)
+* JDK beállítása
+* Alkalmazás indítása az `Application` osztállyal
+* A Swagger elérhető a `http://localhost:8081/swagger-ui` címen
 
-## Event Storming
+## REST kliens
 
-- Developed by Alberto Brandolini
-- Workshop
-- Látható lesz, hogy nincsen egy egységes modell -> a domain számára kell egy reprezentáció mindössze.
-- Bounded Context: az adott üzleti szakértő mentális modellje. Ne akarjam, mint fejlesztő megváltoztatni az ő nézőpontját. Ezért különböző bounded context-ek lesznek.
+* Vagy Postman
+* Vagy Swagger 
+* Vagy Visual Studio Code, REST Client Extension telepítésével képes kezelni a `.http` fájlokat
 
-## DDD (Domain Driven Design)
+## course-service indítása és kiegészítése
 
-1. Strategic design: 
-   1. Problem Space (Domains) <-> Solution Space
-      1. Sub-Domains: Core (amihez a cég a legjobban ért, a bevételi forrás), Supporting (ezzekkel a Core miatt kötelezően kell foglalkozni), Generic (erre vannak kész megoldások -> 3rd party megoldások)
-      2. Bounded Contexts in Solution Space (e.g. HR, kurzus, alkalmazott) és ezek között mapping létrehozása szükséges! Ilyen stratégia van 8 db.
+* `Service` osztály kiegészítése (entitás, repo is)
+
+```shell
+docker run -d -e POSTGRES_DB=course -e POSTGRES_USER=course -e POSTGRES_PASSWORD=course -p 5434:5432  --name course-postgres postgres
+```
+
+* `enroll()` metódus implementálása
+
+## frontend-service indítása és kiegészítése
+
+* Kliens interfész használata REST webszolgáltatás híváshoz
+* API composition, MapStruct használatával
+* ConfigurationProperties bevezetése
+
+## bff-service - Backend for frontend GraphQL használatával
+
+* GraphQL bevezetése
+* Grphiql kliens: `http://localhost:8088/graphiql`
+
+## Gateway
+
+## Caching
+
+```shell
+docker run --name employees-redis -p 6379:6379 -d redis
+docker exec -it employees-redis redis-cli ping
+docker exec -it employees-redis redis-cli --scan
+docker exec -it employees-redis redis-cli get employee::1  
+docker exec -it employees-redis redis-cli get "employees::SimpleKey []"
+```
+
+## Kafka
+
+Kafka és Kafdrop elindítása:
+
+```shell
+docker compose up -d
+```
+
+## Carrier-service
+
+```shell
+docker run -d -e POSTGRES_DB=career -e POSTGRES_USER=career -e POSTGRES_PASSWORD=career -p 5435:5432  --name career-postgres postgres
+```
+## Keycloak indítása
+
+```shell
+docker run -d -e KEYCLOAK_USER=root -e KEYCLOAK_PASSWORD=root -p 8089:8080 --name keycloak jboss/keycloak
+```
+
+Keycloak elérés: `http://localhost:8089/`
+
+* Létre kell hozni egy Realm-et (`Mentoring`)
+* Létre kell hozni egy klienst, amihez meg kell adni annak azonosítóját, <br /> és hogy milyen url-en érhető el (`employee-service`)
+* Létre kell hozni egy klienst, amihez meg kell adni annak azonosítóját, <br /> és hogy milyen url-en érhető el (`frontend-service`)
+* Létre kell hozni a szerepköröket (`employee_admin`)
+* Létre kell hozni egy felhasználót (a _Email Verified_ legyen _On_ értéken, hogy be lehessen vele jelentkezni), 
+  beállítani a jelszavát (a _Temporary_ értéke legyen _Off_, hogy ne kelljen jelszót módosítani), <br /> valamint hozzáadni a szerepkört (`johndoe`)
+
+
+Client Scopes/roles/Mappers/realm roles/Add to ID token
+
+## Zipkin indítása
+
+```shell
+docker run -d -p 9411:9411 --name zipkin openzipkin/zipkin
+```
+
+## EFK stack elindítása
+
+```shell
+docker compose up -d
+```
+
+```
+docker compose logs fluentd-efd -f
+```
+
+## Config server
+
+Repo a `C:\tmp\mentoring-app-config` útvonalon, és ott egy `employee-service.properties`
+állomány, tartalma:
+
+```properties
+logging.level.org.hibernate.SQL=info
+logging.level.employeeservice=info
+```
+
+Fontos, hogy érvényes Git repo legyen.
+
+## Kubernetes deployment
+
+```shell
+cd deployment
+kubectl apply -f employees-postgres-secret.yaml
+kubectl get secrets
+kubectl apply -f employee-postgres-deployment.yaml
+kubectl get deployments
+kubectl get pods
+kubectl logs -f employees-postgres-55486576cb-5jb7q
+```
+
+Image létrehozása előtt Maven clean package!
+
+Létrehoztuk a `Dockerfile` fájlt.
+
+```shell
+cd employee-service
+docker build -t employee-service:0.0.1 .
+kubectl apply -f employee-deployment.yaml
+kubectl logs -f employee-service-5b54ddd747-vc7h9
+kubectl port-forward service/employee-service 9901:8080
+```
