@@ -17,7 +17,7 @@ Microservices with Spring Boot and Spring Cloud ISBN 1801072973
 
 ### Bemutatkozások
 
-Kolléga:
+Kolléga:  
 Moduláris monolit: modulit, lehet, hogy nem is jó rögtön microservice-eket csinálni.
 SOA-ból lettek microservice-ek.   
 Mondjuk el az előítéleteinket!
@@ -111,7 +111,7 @@ Fontos dolgok:
 - The Clean Architecture Picture
 - Spring Cloud Dependency management: nem kell a pom-ba verziószámot megadni, mert "központilag" van kezelve.
 ## Kafka
-
+- Krafft és Kafdrop alkalmazások, amik segítenek egyszerűsíteni a dolgokat
 - Message-oriented Middleware
   - Mi újabbat adott a Kafka? Hogy skálázható és klaszterezhető legyen.
     - Üzenet adatbázis, mindent letárol
@@ -120,16 +120,63 @@ Fontos dolgok:
     - Request
     - Event: ha valami történik a MS-szel, fel lehet rá iratkozni
     - Response
+    - Message queue lehet lokálisan is... de ez nem stateless.
+  - Redpanda Kafka alternatíva: egyszerűbb, gyorsabb és kompatibilis.
+
+## OAuth
+ - jwt.io token kikódolás (Jason Web Token)
+ -  Access token rövid lejáratú, de nem kell folyton belépni, hanem a refresh-tokennel újra bejelentkezteti a rendszerbe a felhasználót.
+ -  Keycloak nem támogatja a spring boot 3-at. Ezért a standard OAuth klienst kell használni...
+ -  Mi az hogy claim? A JWT-ben lévő mező
+ -  Scope? Milyen adatokat kérek le...
+
+## Zipkin
+
+Open Telemetry
+Nagyon jó arra, hogy nézzük, ki hogyan kommunikál. Nem is kell tényleg kódolni, mert a Spring Boot 3 alapból tudja. Elég pom.xml-be berakni a megfelelő függőségeket, és propertiest beállítani.  
+Alternatíva a Jéger. :) Mindegyik opensource, persze lehet vásárolni hozzá támogatást.
+
+## Reaktív programozás
+ - A virtuális thread-ek kiválthatják a reaktív programozást
+ - Flux, Mono használata közbülső operátorokkal.
+ - Egy szál van, nem várakozik.
+ - R2DBC, JOOQ Database driver
+ - ReactiveCrudRepository (REPO), `Mono ...` (service)
+ - Reactive Webclient
+
+## Sping Cloud Configuration
+
+Adatbázis, mögötte lehet Git vagy Vault server! Tud szólni, és értesíteni az alkalmazásokat, hogy valami a gitben megváltozott.   
+Használ egy üzenetküldő middleware-t
+- Spring Cloud Config Server, hogyan triggerelődik?
+  - Filesystem figyelése
+  - Git commit hook
+- Ez is egy proxy-val történik, a bean-ek erre a proxy-ra hivatkoznak. Tehát nem az egész applikation kontext indul újra, hanem csak ez a bean.
+
+## Kubernetes
+
+ - Nagyon jó, hogy a docker desktop alapból ad nekünk egy kubernetest
+ - Infra elemek, környezetek mehetnek külön namespace-be.
+ - Egy podba tegyünk egy konténert lehetőleg, de mehet bele sidecar container:
+   - HTTPS hozzáadása
+   - Logok elkapása és beküldése az EFK Stackre.
+ - Egy pod ugyanazokon a portokon osztoznak meg.
+ - A pod az egy ideiglenes dolog, bármikor leállítható, elindítható... stb.
+ - Podok elindítására egy magasabb absztrakciós szintet használunk: _Deployment_
+ - Rolling update: a régieket nem állítja le, amíg az új változat nem indult el. Ellentéte a recreate.
+ - Stateful set: állapottal rendelkező erőforrás. Deployment helyett használható kvázi.
 ---
+   
 ---
 # Random Notes out of Context
-
+- Mindig **Spring Boot Reference Documentation**-nel kell kezdeni.
 - Egy microservice-ben 5-8 tábla lehet max.
 - Annotation JPA "`fetchtype eager`"
 - UL: Ubiquitous Language, mindenki az üzlet és az informatikus is megérti.  
 Fogalomszótár kellene. Fájdalmas, de behozza az árát. Magyarországon magyarul fejlesztünk. Ha az üzlet nyelve angol, akkor mehet az angol. Persze lehet, hogy a szoftvert eladjuk más országba is, akkor nagyon kell a fogalomszótár.
 - JaSypt Java Simplified Encription
 - Saga Microservice-en átnyúló üzleti folyamat, elosztott tranzakciókezelés: lehet, hogy monolit kell? Igen...
+  - Ez tulajdonképpen a másik iránya az API composition-nek. A felhasználó szeretne olyan command-ot végrehajtani, ami több microservice-t is érint.
   - Event sourcing... Tranzakciók ellenőrzése, Snapshot: pl. banki napi zárás Megoldás: AxonIQ
   - Ezeknek két típusa van:
     - Coreography: mindenki tudja, ki a következő szereplő, lánc
@@ -141,4 +188,8 @@ Fogalomszótár kellene. Fájdalmas, de behozza az árát. Magyarországon magya
 - Saga csak egy helyütt lehet
   - Camunda Workflow motor... ha túl bonyolult lenne már a Saga. 
   https://www.jtechlog.hu/2014/07/25/pehelysulyu-workflow-activitivel.html
-- 
+- "Ha valaki microservice-eket akar, akkor muszáj üzenetbuszt használni... :)"
+  - CQRS, websocket, poll
+- CNCF tanusított cloud eszközök listája.
+- 12factor.net érdekes honlap... egyebet nem tudok mondani. :)
+- ThreadLocal, minden szálnak vannak saját lokális attribútumai.Egy HTTP Request egy ilyen szál.
