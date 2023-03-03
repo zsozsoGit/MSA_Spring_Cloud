@@ -1,7 +1,7 @@
 # Bevezető
 
 GitHub repo a forrásokkal és slide-okkal:
-https://github.com/Training360/ ??
+https://github.com/Training360/spr-cl-trainin-2023-02-28
 
 ## Tematika megjegyzések
 Minden tool itt ingyenes ezen a tanfolyamon
@@ -122,6 +122,7 @@ Fontos dolgok:
     - Response
     - Message queue lehet lokálisan is... de ez nem stateless.
   - Redpanda Kafka alternatíva: egyszerűbb, gyorsabb és kompatibilis.
+  - ![Kafka](kafka.png)
 
 ## OAuth
  - jwt.io token kikódolás (Jason Web Token)
@@ -135,6 +136,7 @@ Fontos dolgok:
 Open Telemetry
 Nagyon jó arra, hogy nézzük, ki hogyan kommunikál. Nem is kell tényleg kódolni, mert a Spring Boot 3 alapból tudja. Elég pom.xml-be berakni a megfelelő függőségeket, és propertiest beállítani.  
 Alternatíva a Jéger. :) Mindegyik opensource, persze lehet vásárolni hozzá támogatást.
+![Zipkin](Zipkin.png)
 
 ## Reaktív programozás
  - A virtuális thread-ek kiválthatják a reaktív programozást
@@ -165,6 +167,19 @@ Használ egy üzenetküldő middleware-t
  - Podok elindítására egy magasabb absztrakciós szintet használunk: _Deployment_
  - Rolling update: a régieket nem állítja le, amíg az új változat nem indult el. Ellentéte a recreate.
  - Stateful set: állapottal rendelkező erőforrás. Deployment helyett használható kvázi.
+ - A service segít egy stabil hálózati kapcsolat fenntartásában.
+ - Kubernetes nem szereti a latest verzió megadásokat...
+ - Van egy ilyen maven plugin is, ami csinál egy ocr konténert, nemcsak a dockerfile.
+ - Helm: Jinja segítségével többféle felhőkörnyezetbe tud telepíteni... Ez kvázi a kubernetes package managere. Újabb változat a Kustomize.io, ez olyan mint az effective pom a maven számára.
+ - ServiceMesh: Techworld with Nana vagy hwsw magyarul ugyanerről a témáról
+   - Istio control plane kontrollálja a sidecar envoy proxy-kat...
+   - Ingress gateway-t is lehet konfigolni ezzel...
+
+## Gitlab
+
+ - Nagyon egyszerű egy docker comopose-zal indítani egy GitLabot.
+ - mwnw maven letöltő... ezért nem kell maven image, elég az openjdk image.
+ - központi helyre is lehet cache-t létrehozatni.
 ---
    
 ---
@@ -193,3 +208,8 @@ Fogalomszótár kellene. Fájdalmas, de behozza az árát. Magyarországon magya
 - CNCF tanusított cloud eszközök listája.
 - 12factor.net érdekes honlap... egyebet nem tudok mondani. :)
 - ThreadLocal, minden szálnak vannak saját lokális attribútumai.Egy HTTP Request egy ilyen szál.
+- A/B test: két megvalósítás, és a felhasználók egy része az egyiket használja...
+- Canary deployment: hasonlóan egy kicsi része a felhasználóknak kapja meg először az új szoftvert
+- Continous delivery: "minden commit egy potenciális release", feature flag: még nincsen bekapcsolva a felhasználó számára...
+- Docker in Docker: sajnos root felhasználóval kellene futtatni, ami eléggé biztonságtalan, helyette a ugyanazon a unix socketen kommunikálnak és mindenki a host dockerét használja. De így meg az image-ekhez lehet hozzáférni. 
+  - Hogyan lehet docker nélkül image-et előállítani: Kaniko vagy a maven egy beállítása. Gitlab ezt támogatja eléggé jól.
